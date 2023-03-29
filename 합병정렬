@@ -1,0 +1,97 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#define MAX 1000000
+using namespace std;
+
+int num[MAX];
+
+void Merge(int arr[], int l, int r)
+{
+  int mid = (l + r) / 2;
+  int i = l;
+  int j = mid + 1;
+  int index = l;
+  while (i <= mid && j <= r)
+  {
+    if (arr[i] > arr[j])
+    {
+      num[index] = arr[j];
+      j++;
+    }
+    else
+    {
+      num[index] = arr[i];
+      i++;
+    }
+    index++;
+  }
+  if (i <= mid)
+  {
+    while (i <= mid)
+    {
+      num[index] = arr[i];
+      index++;
+      i++;
+    }
+  }
+  else
+  {
+    while (j <= r)
+    {
+      num[index] = arr[j];
+      index++;
+      j++;
+    }
+  }
+  for (int i = 0; i <= r; i++)
+  {
+    arr[i] = num[i];
+  }
+}
+void Merge_Sort(int arr[], int l, int r)
+{
+  if (l < r)
+  {
+    int mid = (l + r) / 2;
+    Merge_Sort(arr, l, mid);
+    Merge_Sort(arr, mid + 1, r);
+    Merge(arr, l, r);
+  }
+}
+void checkSort(int arr[], int n)
+{
+  int i;
+  bool sorted;
+  sorted = true;
+  for (i = 1; i < n; i++)
+  {
+
+    if (arr[i] < arr[i - 1])
+      sorted = false;
+  }
+  if (sorted)
+    cout << "정렬 완료." << endl;
+  else
+    cout << "정렬 오류." << endl;
+}
+
+int main()
+{
+  int arr[MAX];
+  int n;
+  clock_t start, end;
+  double result;
+  srand((unsigned int)time(NULL));
+  cin >> n;
+  for (int i = 0; i < n; i++)
+  {
+    arr[i] = rand() % 100;
+  }
+  start = clock();
+  Merge_Sort(arr, 0, n - 1);
+  checkSort(arr, n);
+  end = clock();
+  result = (double)(end - start);
+  cout << "Time : " << result << endl;
+}
