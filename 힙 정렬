@@ -1,0 +1,186 @@
+#include <iostream>
+#include <chrono>
+#include <cstdlib>
+using namespace std;
+
+#define MAX 100000
+
+void MaxheapSort(int arr[], int n);
+void buildMaxHeap(int arr[], int n);
+void buildMinHeap(int arr[], int n);
+void Maxheapify(int arr[], int index, int heapSize);
+void MinheapSort(int arr[], int n);
+void Minheapify(int arr[], int index, int heapSize);
+void RandomF(int arr_max[], int arr_min[], int n);
+void MaxcheckSort(int arr[], int n);
+void MincheckSort(int arr[], int n);
+
+int main()
+{
+  int arr_max[MAX];
+  int arr_min[MAX];
+
+  RandomF(arr_max, arr_min, 1024);
+  auto start = chrono::high_resolution_clock::now();
+  MaxheapSort(arr_max, 1024);
+  auto end = chrono::high_resolution_clock::now();
+  chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "MaxHeap 1024 : " << duration.count() << " microseconds" << endl;
+  MaxcheckSort(arr_max, 1024);
+  start = chrono::high_resolution_clock::now();
+  MinheapSort(arr_min, 1024);
+  end = chrono::high_resolution_clock::now();
+  duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "MinHeap 1024 : " << duration.count() << " microseconds" << endl;
+  MincheckSort(arr_min, 1024);
+  RandomF(arr_max, arr_min, 4096);
+  start = chrono::high_resolution_clock::now();
+  MaxheapSort(arr_max, 4096);
+  end = chrono::high_resolution_clock::now();
+  duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "MaxHeap 4096 : " << duration.count() << " microseconds" << endl;
+  MaxcheckSort(arr_max, 4096);
+  start = chrono::high_resolution_clock::now();
+  MinheapSort(arr_min, 4096);
+  end = chrono::high_resolution_clock::now();
+  duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "MinHeap 4096 : " << duration.count() << " microseconds" << endl;
+  MincheckSort(arr_min, 4096);
+  RandomF(arr_max, arr_min, 16384);
+  start = chrono::high_resolution_clock::now();
+  MaxheapSort(arr_max, 16384);
+  end = chrono::high_resolution_clock::now();
+  duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "MaxHeap 16384 : " << duration.count() << " microseconds" << endl;
+  MaxcheckSort(arr_max, 16384);
+  start = chrono::high_resolution_clock::now();
+  MinheapSort(arr_min, 16384);
+  end = chrono::high_resolution_clock::now();
+  duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "MinHeap 16384 : " << duration.count() << " microseconds" << endl;
+  MincheckSort(arr_min, 16384);
+}
+
+void MaxcheckSort(int arr[], int n)
+{
+  int i;
+  bool sorted;
+  sorted = true;
+  for (i = 1; i < n; i++)
+  {
+
+    if (arr[i] < arr[i - 1])
+      sorted = false;
+  }
+  if (sorted)
+    cout << "정렬 완료." << endl;
+  else
+    cout << "정렬 오류." << endl;
+}
+
+void MincheckSort(int arr[], int n)
+{
+  int i;
+  bool sorted;
+  sorted = true;
+  for (i = 1; i < n; i++)
+  {
+
+    if (arr[i] > arr[i - 1])
+      sorted = false;
+  }
+  if (sorted)
+    cout << "정렬 완료." << endl;
+  else
+    cout << "정렬 오류." << endl;
+}
+
+void RandomF(int arr_max[], int arr_min[], int n)
+{
+  srand((unsigned int)time(NULL));
+  for (int i = 0; i < n; i++)
+  {
+    arr_max[i] = arr_min[i] = rand() % 100;
+  }
+}
+
+void MaxheapSort(int arr[], int n)
+{
+  buildMaxHeap(arr, n);
+  for (int i = n - 1; i >= 1; i--)
+  {
+    int temp = arr[i];
+    arr[i] = arr[0];
+    arr[0] = temp;
+    Maxheapify(arr, 0, i);
+  }
+}
+
+void buildMaxHeap(int arr[], int n)
+{
+  for (int i = (n - 1) / 2; i >= 0; i--)
+  {
+    Maxheapify(arr, i, n);
+  }
+}
+
+void Maxheapify(int arr[], int index, int heapSize)
+{
+  int leftC = 2 * index + 1;
+  int rightC = 2 * index + 2;
+  int largest = index;
+  if (leftC < heapSize && arr[leftC] > arr[largest])
+  {
+    largest = leftC;
+  }
+  if (rightC < heapSize && arr[rightC] > arr[largest])
+  {
+    largest = rightC;
+  }
+  if (largest != index)
+  {
+    int temp = arr[index];
+    arr[index] = arr[largest];
+    arr[largest] = temp;
+    Maxheapify(arr, largest, heapSize);
+  }
+}
+void MinheapSort(int arr[], int n)
+{
+  buildMinHeap(arr, n);
+  for (int i = n - 1; i >= 1; i--)
+  {
+    int temp = arr[i];
+    arr[i] = arr[0];
+    arr[0] = temp;
+    Minheapify(arr, 0, i);
+  }
+}
+void buildMinHeap(int arr[], int n)
+{
+  for (int i = (n - 1) / 2; i >= 0; i--)
+  {
+    Minheapify(arr, i, n);
+  }
+}
+void Minheapify(int arr[], int index, int heapSize)
+{
+  int leftC = 2 * index + 1;
+  int rightC = 2 * index + 2;
+  int largest = index;
+  if (leftC < heapSize && arr[leftC] < arr[largest])
+  {
+    largest = leftC;
+  }
+  if (rightC < heapSize && arr[rightC] < arr[largest])
+  {
+    largest = rightC;
+  }
+  if (largest != index)
+  {
+    int temp = arr[largest];
+    arr[largest] = arr[index];
+    arr[index] = temp;
+    Minheapify(arr, largest, heapSize);
+  }
+}
