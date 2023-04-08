@@ -1,0 +1,71 @@
+#include <iostream>
+#include <cstdlib>
+#include <chrono>
+#define MAX 1000000
+using namespace std;
+
+void Quick_Sort(int arr[], int l, int r)
+{
+  if (l >= r)
+    return;
+  int pivot = l;
+  int left = l + 1;
+  int right = r;
+  int temp;
+  while (left <= right)
+  {
+    while (left <= r && arr[pivot] >= arr[left])
+      left++;
+    while (right > l && arr[pivot] <= arr[right])
+      right--;
+    if (left > right)
+    {
+      temp = arr[right];
+      arr[right] = arr[pivot];
+      arr[pivot] = temp;
+    }
+    else
+    {
+      temp = arr[right];
+      arr[right] = arr[left];
+      arr[left] = temp;
+    }
+  }
+  Quick_Sort(arr, l, right - 1);
+  Quick_Sort(arr, right + 1, r);
+}
+
+void checkSort(int arr[], int n)
+{
+  int i;
+  bool sorted;
+  sorted = true;
+  for (i = 1; i < n; i++)
+  {
+
+    if (arr[i] < arr[i - 1])
+      sorted = false;
+  }
+  if (sorted)
+    cout << "정렬 완료." << endl;
+  else
+    cout << "정렬 오류." << endl;
+}
+
+int main()
+{
+  int arr[MAX];
+  int n;
+  srand((unsigned int)time(NULL));
+  cin >> n;
+  for (int i = 0; i < n; i++)
+  {
+    arr[i] = rand() % 100;
+  }
+  auto start = chrono::high_resolution_clock::now();
+  Quick_Sort(arr, 0, n - 1);
+  auto end = chrono::high_resolution_clock::now();
+  checkSort(arr, n);
+  chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  cout << "Time : " << duration.count() << "microsecnds" << endl;
+}
