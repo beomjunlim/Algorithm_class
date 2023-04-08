@@ -1,0 +1,55 @@
+#include <iostream>
+#include <cstdlib>
+#include <queue>
+using namespace std;
+#define MAX 20
+
+void checkSort(int arr[], int n)
+{
+  bool sorted;
+  sorted = true;
+  for (int i = 1; i < n; i++)
+  {
+    if (arr[i] < arr[i - 1])
+      sorted = false;
+  }
+  if (sorted)
+    cout << "정렬 완료." << endl;
+  else
+    cout << "정렬 오류." << endl;
+}
+
+int main()
+{
+  int arr[MAX];
+  queue<int> q[10];
+  int num;
+  cin >> num;
+  srand((unsigned int)time(NULL));
+  for (int i = 0; i < num; i++)
+  {
+    arr[i] = (rand() % 1000);
+    if (arr[i] == 0)
+      arr[i] += 1; // 1~999
+  }
+  int n = 1;
+  while (n != 10000)
+  {
+    for (int i = 0; i < num; i++)
+    {
+      q[(arr[i] / n) % 10].push(arr[i]);
+    }
+    int index = 0;
+    for (int i = 0; i < 10; i++)
+    {
+      while (!q[i].empty())
+      {
+        arr[index] = q[i].front();
+        q[i].pop();
+        index++;
+      }
+    }
+    n = n * 10;
+  }
+  checkSort(arr, num);
+}
