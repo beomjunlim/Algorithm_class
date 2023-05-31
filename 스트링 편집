@@ -6,9 +6,9 @@ using namespace std;
 
 int Editdistance(char s[], char t[], int m, int n)
 {
-  int D[m + 1][n + 1];
+  int D[m + 1][n + 1];// 편집 비용을 담는 배열
   D[0][0] = 0;
-  int cost = 0;
+  int cost = 0;// 대치 비용
   for (int i = 1; i <= n; i++)
   {
     D[i][0] = D[i - 1][0] + 1;
@@ -23,11 +23,11 @@ int Editdistance(char s[], char t[], int m, int n)
   {
     for (int j = 1; j <= m; j++)
     {
-      if (s[i - 1] == t[j - 1])
+      if (s[i - 1] == t[j - 1])// source target이 같을 경우 대치 비용은 0
         cost = 0;
       else
         cost = 1;
-      D[i][j] = min(D[i - 1][j - 1] + cost, min(D[i - 1][j] + 1, D[i][j - 1] + 1));
+      D[i][j] = min(D[i - 1][j - 1] + cost, min(D[i - 1][j] + 1, D[i][j - 1] + 1));// 삽입 삭제 대입 중 작은 비용으로 업데이트
     }
   }
   for (int i = 0; i < m; i++)
