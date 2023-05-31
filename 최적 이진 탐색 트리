@@ -1,0 +1,94 @@
+#include <iostream>
+#include <climits>
+using namespace std;
+
+#define MAX 100
+
+double A[MAX][MAX]; // 최소비용의 확률
+int r[MAX][MAX];    // 최소값을 갖는 k
+double p[MAX];      // 확률 담는 배열
+
+struct node
+{
+  int index;
+  double prob;
+  node *left;
+  node *right;
+  node(int i, double p)
+  {
+    index = i;
+    prob = p;
+    left = NULL;
+    right = NULL;
+  }
+};
+double OptimalBST(int n)
+{
+  for (int i = 1; i <= n; i++)
+  {
+    A[i][i] = p[i];
+    r[i][i] = i;
+  }//자기 자신만 하는 경우
+
+  for (int d = 1; d < n; d++)// 시작과 끝 차이
+  {
+    for (int i = 1; i <= n - d; i++)
+    {
+      int j = i + d;
+      double sumP = 0.0;
+      A[i][j] = INT_MAX;
+      for (int k = i; k <= j; k++)
+      {
+        sumP += p[k];
+      }
+      for (int k = i; k <= j; k++)
+      {
+        double sum = A[i][k - 1] + A[k + 1][j] + sumP;
+        if (A[i][j] > sum)
+        {
+          A[i][j] = sum;
+          r[i][j] = k;
+        }
+      }
+    }
+  }
+  return A[1][n];
+}
+
+node *BuildTree(int i, int j)
+{
+  int k;
+  k = r[i][j];
+  if (k == 0)
+    return nullptr;
+  else
+  {
+    node *root = new node(k, p[k]);
+    root->left = BuildTree(i, k - 1);
+    root->right = BuildTree(k + 1, j);
+    return root;
+  }
+}
+
+void inorderTraversal(node *root)
+{
+  if (root == nullptr)
+    return;
+
+  inorderTraversal(root->left);
+  cout << "Index: " << root->index << ", Probability: " << root->prob << endl;
+  inorderTraversal(root->right);
+}
+
+int main()
+{
+
+  for (int i = 1; i <= 4; i++)
+  {
+    cin >> p[i];
+  }
+
+  cout << OptimalBST(4) << endl;
+  node *root = BuildTree(1, 4);
+  inorderTraversal(root);
+}
