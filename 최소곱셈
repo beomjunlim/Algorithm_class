@@ -1,0 +1,55 @@
+#include <iostream>
+#include <climits>
+using namespace std;
+
+#define MAX 100
+
+int P[MAX][MAX];                 // 최소값을 주는 k값을 담는 배열
+int M[MAX][MAX];                 // 곱셈 횟수를 담는 배열
+int d[] = {5, 2, 3, 4, 6, 7, 8}; // 행렬 크기
+
+int MinMult(int n)
+{
+  for (int i = 1; i <= n; i++)
+  {
+    M[i][i] = 0; // 곱하는 횟수 없으므로 0
+  }
+
+  for (int diagonal = 1; diagonal <= n - 1; diagonal++)
+  {
+    for (int i = 1; i <= n - diagonal; i++)
+    {
+      int j = i + diagonal; // j번째 배열과 i번째 배열의 곱셈의 차가 diagonal
+      M[i][j] = INT_MAX;    // 초기화 전 최대값을 넣어 k값에 따라 업데이트
+      for (int k = i; k <= j - 1; k++)
+      {
+        if (M[i][j] > (M[i][k] + M[k + 1][j] + d[i - 1] * d[k] * d[j]))
+        {
+          M[i][j] = (M[i][k] + M[k + 1][j] + d[i - 1] * d[k] * d[j]); // 최소값으로 배열 업데이트
+          P[i][j] = k;                                                // 최소값을 갖게해주는 k 값 저장
+        }
+      }
+    }
+  }
+  return M[1][n]; // 최솟값
+}
+
+void order(int i, int j)
+{
+  if (i == j)
+    cout << "A" << i;
+  else
+  {
+    int k = P[i][j];
+    cout << "(";
+    order(i, k);
+    order(k + 1, j); // 점화식 M[i][k]+M[k+1][j]에 의해서 호출 순서
+    cout << ")";
+  }
+}
+
+int main()
+{
+  cout << MinMult(6) << endl;
+  order(1, 6);
+}
