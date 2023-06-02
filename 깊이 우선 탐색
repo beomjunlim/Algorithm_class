@@ -1,0 +1,71 @@
+#include <iostream>
+#include <stack>
+#include <vector>
+using namespace std;
+
+#define MAX 100
+
+bool visited[MAX] = {false}; // 방문 여부 확인
+bool visited_r[MAX] = {false};
+vector<int> a[MAX];
+
+void dfs(int s)
+{
+  stack<int> st;
+  st.push(s);
+  visited[s] = true;
+  cout << s << " ";
+
+  while (!st.empty())
+  {
+    int x = st.top();// 스택의 상단 부터 탐색
+
+    st.pop();// 스택에 들어있는 노드 하나씩 빼면서 확인
+    for (int i = 0; i < a[x].size(); i++)// 인접한 노드를 찾는다
+    {
+      int y = a[x][i];
+      if (!visited[y])// 인접하고 방문하지 않은 노드가 있을 때
+      {
+        st.push(x);// 부모 노드의 또 다른 자식 노드가 있을 수 있으므로 부모 노드도 스택에 넣어준다.
+        st.push(y);// 인접한 자식 노드 넣어준다.
+        visited[y] = true;// 방문 처리
+        cout << y << " ";
+        break;// 깊이 우선이므로 자식의 인접한 노드가 있는지 파고들기 위해 다음 단계로 넘어간다.
+      }
+    }
+  }
+  cout << endl;
+}
+
+void dfs_recursive(int s)
+{
+  visited_r[s] = true;
+  cout << s << " ";
+  for (int i = 0; i < a[s].size(); i++)
+  {
+    int x = a[s][i];
+    if (!visited_r[x])
+    {
+      dfs_recursive(x);// 인접한 노드가 있을시 인접한 노드의 인접한 노드를 찾으로 재귀 호출
+    }
+  }
+}
+
+int main()
+{
+  a[1].push_back(2);
+  a[1].push_back(3);
+  a[1].push_back(4);
+
+  a[2].push_back(5);
+  a[2].push_back(6);
+
+  a[5].push_back(7);
+  a[5].push_back(8);
+
+  cout << "DFS using stack" << endl;
+  dfs(1);
+  cout << "DFS using recursive" << endl;
+  dfs_recursive(1);
+  cout << endl;
+}
