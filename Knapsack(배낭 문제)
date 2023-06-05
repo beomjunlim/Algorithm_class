@@ -1,0 +1,60 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+#define MAX 100
+
+int P[MAX][MAX];          // i번째 품목까지 포함해서 j무게를 담을 수 있을 때 최대의 가치를 담는 배열
+vector<pair<int, int>> v; // 보석 (무게, 가치)
+int w;                    // 배낭 무게
+int n;                    // 품목 개수
+
+void Knapsack(int n, int w)
+{
+  for (int i = 1; i <= n; i++)
+  {
+    int dw = v[i - 1].first;  // i반쩨 픔목의 무게
+    int dg = v[i - 1].second; // i반쩨 픔목의 가치
+    for (int j = 1; j <= w; j++)
+    {
+      if (j >= dw) // i번째 품목을 추가할 수 있는 경우
+      {
+        P[i][j] = max(P[i - 1][j], dg + P[i - 1][j - dw]); // i번째 품목을 포함하지 않았을 때 와 i번째 품목을 추가했을 경우중 큰 경우로 P[i][j] 업데이트
+      }
+      else // i번째 품목을 추가할 수 없는 경우
+      {
+        P[i][j] = P[i - 1][j]; // i번째 품목을 추가할 수 없으므로 i-1번째 j무게가 최대
+      }
+    }
+  }
+  cout << P[n][w] << endl; // 모든 품목을 고려할 경우 w 배낭 무게의 최대 가치
+}
+
+int main()
+{
+  cout << "품목 개수 : ";
+  cin >> n;
+  cout << "배낭 무게 : ";
+  cin >> w;
+
+  for (int i = 0; i < n; i++)
+  {
+    int a, b;
+    cout << "품목 무게 가치 : ";
+    cin >> a;
+    cin >> b;
+    v.push_back(make_pair(a, b)); // i+1번째 품목의 무게와 가치 벡터에 넣는다.
+  }
+
+  Knapsack(n, w);
+}
+
+// v.push_back(make_pair(5, 5));
+// v.push_back(make_pair(10, 7));
+// v.push_back(make_pair(7, 10));
+// v.push_back(make_pair(3, 6));
+// v.push_back(make_pair(4, 8));
+// v.push_back(make_pair(11, 20));
+// n = 6;
+// w = 15;
