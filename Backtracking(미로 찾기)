@@ -1,0 +1,70 @@
+// 미로 찾기
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define MAX 100
+
+vector<int> L[MAX];
+bool visited[MAX];
+int prevL[MAX];
+int destination;
+
+void maze(int v)
+{
+  visited[v] = true;
+  if (v == destination)
+    cout << "Success" << endl;
+  else
+  {
+    for (int x : L[v])
+    {
+      if (!visited[x])
+      {
+        prevL[x] = v;
+        maze(x);
+      }
+    }
+  }
+}
+
+int main()
+{
+  L[0] = {1};
+  L[1] = {2, 3};
+  L[2] = {};
+  L[3] = {4, 5};
+  L[4] = {};
+  L[5] = {6, 7};
+  L[6] = {};
+  L[7] = {8, 9};
+  L[8] = {10, 11, 12};
+  L[9] = {};
+  L[10] = {};
+  L[11] = {};
+  L[12] = {};
+  // 입력 및 초기화 예시
+  int numVertices = 13;
+  int start = 0;
+  destination = 9;
+
+  for (int i = 0; i < numVertices; i++)
+  {
+    visited[i] = false;
+    prevL[i] = -1;
+  }
+  maze(0);
+
+  vector<int> path;
+  int v = destination;
+  while (v != -1)
+  {
+    path.push_back(v);
+    v = prevL[v];
+  }
+  for (int i = path.size() - 1; i >= 0; i--)
+  {
+    cout << path[i] << " ";
+  }
+  cout << endl;
+}
