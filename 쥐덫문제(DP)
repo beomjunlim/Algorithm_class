@@ -1,0 +1,86 @@
+// 치즈 1 길 0 쥐덫 -100
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define MAX 100
+
+int MaxNum(int a, int b)
+{
+  return (a < b) ? b : a;
+}
+
+void printPath(int M[MAX][MAX], int n, int m)
+{
+  vector<pair<int, int>> v; // 경로를 담아줄 벡터 선언
+  int row = 0;
+  int col = m - 1;
+  v.push_back(make_pair(row, col));
+  while (row != n - 1 || col != 0)
+  {
+    if (row != n - 1 && col == 0) // row, col로 오는 경우가 위로 이동밖에 없을 경우
+    {
+      row = row + 1;
+      col = col;
+    }
+    if (row == n - 1 && col != 0) // row, col로 오는 경우가 오른쪽 이동밖에 없을 경우
+    {
+      row = row;
+      col = col - 1;
+    }
+    if (row != n - 1 && col != 0) // row, col로 오는 경우가 여러가지 일 경우
+    {
+      int max = MaxNum(M[row][col - 1], M[row + 1][col]);
+      if (max == M[row][col - 1])
+      {
+        row = row;
+        col = col - 1;
+      }
+      else
+      {
+        row = row + 1;
+        col = col;
+      }
+    }
+    v.push_back(make_pair(row, col));
+  }
+  cout << endl;
+  for (int i = v.size() - 1; i >= 0; i--)
+  {
+    cout << "(" << v[i].first << ", " << v[i].second << ") "; // 역 추적했으므로 마지막부터 0번째로 출력하면 입구에서 출구로 가는 경로가 나온다.
+  }
+}
+
+int MaxCheese(int p[MAX][MAX], int M[MAX][MAX], int n, int m)
+{
+  for (int i = n - 1; i >= 0; i--)
+  {
+    for (int j = 0; j < m; j++)
+    {
+      if (i == n - 1 && j != 0) // i,j번째 칸으로 오는 방법이 오른쪽 이동 밖에 없을 경우
+      {
+        M[i][j] = p[i][j] + M[i][j - 1];
+      }
+      if (i != n - 1 && j == 0) // i,j번째 칸으로 오는 방법이 위쪽 이동 밖에 없을 경우
+      {
+        M[i][j] = p[i][j] + M[i + 1][j];
+      }
+      if (i != n - 1 && j != 0) // 이동할 수 있는 방법가 2가지인 경우
+      {
+        int Max = MaxNum(M[i + 1][j], M[i][j - 1]);
+        M[i][j] = p[i][j] + Max;
+      }
+    }
+  }
+  return M[0][m - 1];
+}
+
+int main()
+{
+  int p[MAX][MAX] = {{0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, -100, 0}, {1, 0, -100, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 1, -100, 0, 0, 0}, {0, 1, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -100, 1, -100, 0}, {0, 1, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0}};
+  int M[MAX][MAX];
+
+  cout << "최대 치즈의 개수 : " << MaxCheese(p, M, 9, 9) << endl;
+  cout << "치즈를 먹을 때 거친 경로" << endl;
+  printPath(M, 9, 9);
+}
