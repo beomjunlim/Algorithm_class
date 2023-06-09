@@ -1,0 +1,110 @@
+#include <iostream>
+#include <queue>
+#include <string>
+#include <map>
+using namespace std;
+
+struct nodetype
+{
+  char symbol;
+  int frequency;
+  nodetype *left;
+  nodetype *right;
+  nodetype(char s, int f)
+  {
+    symbol = s;
+    frequency = f;
+    left = right = NULL;
+  }
+  bool operator<(const nodetype &other) const
+  {
+    return frequency > other.frequency; // 빈도수 기준으로 우선순위
+  }
+};
+
+nodetype *HuffmanEcoding(map<char, int> &freqMap)
+{
+  priority_queue<nodetype> q;
+  for (auto it = freqMap.begin(); it != freqMap.end(); it++)
+  {
+    nodetype *r = new nodetype(it->first, it->second); // str,freq
+    q.push(*r);
+  }
+
+  while (q.size() > 1)
+  {
+    nodetype *l = new nodetype(q.top());
+    q.pop();
+
+    nodetype *r = new nodetype(q.top());
+    q.pop();
+
+    nodetype *node = new nodetype('\0', l->frequency + r->frequency);
+
+    node->left = l;
+    node->right = r;
+    q.push(*node);
+  }
+  return new nodetype(q.top());
+}
+
+void generateHuffmanCodes(nodetype *root, string code, map<char, string> &codes)
+{
+  if (!root)
+    return;
+  if (root->left == nullptr && root->right == nullptr)
+  {
+    codes[root->symbol] = code;
+    // cout << codes[root->symbol] << endl;
+  }
+  generateHuffmanCodes(root->left, code + "0", codes);
+  generateHuffmanCodes(root->right, (code + "1"), codes);
+}
+
+void printCode(nodetype *root, map<char, string> codeMap)
+{
+  if (root->symbol != '\0')
+  {
+    cout << root->symbol << " : " << codeMap[root->symbol] << endl;
+  }
+  else
+  {
+    printCode(root->left, codeMap);
+    printCode(root->right, codeMap);
+  }
+}
+
+string huffmanEncode(string str, map<char, string> &codeMap)
+{
+  string encodedStr = "";
+  for (char c : str)
+  {
+    encodedStr += codeMap[c];
+  }
+  return encodedStr;
+}
+
+int main()
+{
+  string str;
+  getline(cin, str);
+
+  map<char, int> freqMap;
+  for (char c : str) // 문자 빈도수 체크
+  {
+    freqMap[c]++;
+  }
+  // 허프만 트리 생성
+  nodetype *root = HuffmanEcoding(freqMap);
+  // 허프만 코드 생성
+  map<char, string> codeMap;
+  generateHuffmanCodes(root, "", codeMap);
+
+  // 문자열을 허프만 코드로 인코딩
+  string encodedStr = huffmanEncode(str, codeMap);
+  cout << "Huffman code table : " << endl;
+  printCode(root, codeMap);
+  // 결과 출력
+  cout << "Input string : " << str << endl;
+  cout << "Encoded string : " << encodedStr << endl;
+}
