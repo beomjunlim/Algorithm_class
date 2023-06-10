@@ -1,0 +1,71 @@
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <string.h>
+
+int num = 4;
+char ids[100][100] = {"kim", "lee", "park", "hong"};
+char pwds[100][100] = {"aaa", "bb", "cc", "ddd"};
+
+bool checkUser(char *id, char *pwd, int num)
+{
+  for (int i = 0; i < num; i++)
+  {
+    if (strcmp(ids[i], id) == 0 && strcmp(pwds[i], pwd) == 0)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+void registerUser(char *id, char *pwd)
+{
+  if (num == 100)
+  {
+    printf("ERROR");
+    return;
+  }
+  strcpy(ids[num], id);
+  strcpy(pwds[num], pwd);
+  num++;
+}
+
+int main(int argc, char *argv[])
+{
+  if (argc != 2)
+    return -1;
+  char id[100];
+  char pwd[100];
+  bool sw = true;
+  while (sw)
+  {
+    printf("enter id and pwd. enter quit to stop\n");
+    scanf("%s %s", id, pwd);
+    if (strcmp(id, "quit") == 0 && strcmp(pwd, "quit") == 0)
+    {
+      sw = false;
+    }
+    if (checkUser(id, pwd, num))
+    {
+      printf("legal user\n");
+    }
+    else
+    {
+      printf("not legal. we reggister you\n");
+      registerUser(id, pwd);
+      printf("now you are legal user\n");
+    }
+  }
+  FILE *fd = fopen(argv[1], "w");
+  for (int i = 0; i < num; i++)
+  {
+    fprintf(fd, "%s %s", ids[i], pwds[i]);
+  }
+  fclose(fd);
+  return 0;
+}
