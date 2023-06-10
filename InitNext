@@ -1,0 +1,39 @@
+#include <iostream>
+#include <string>
+#define MAX 100
+using namespace std;
+
+int *InitNext(char arr[], int n)
+{
+  int size = n;
+  int *next = new int[size]; // 배열을 함수 호출시 메모리에 할당해줘야 함
+  next[0] = 0;
+  int j = 0;
+  for (int i = 1; i < n; i++)
+  {
+    while (j > 0 && arr[j] != arr[i])
+    {
+      j = next[j - 1];
+    }
+    if (arr[j] == arr[i])
+      j += 1;
+    next[i] = j;
+  }
+  for (int i = 0; i < n; i++)
+  {
+    cout << next[i] << " ";
+  }
+  cout << endl;
+  return next;
+}
+int main()
+{
+  char arr[8] = {'a', 'b', 'a', 'b', 'a', 'b', 'c', 'a'};
+
+  int *arr_a = InitNext(arr, 8);
+  for (int i = 0; i < 8; i++)
+  {
+    cout << arr_a[i] << " ";
+  }
+  delete[] arr_a;
+}
