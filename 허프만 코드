@@ -1,0 +1,98 @@
+#include <iostream>
+#include <queue>
+#include <map>
+#include <string>
+using namespace std;
+
+struct nodetype
+{
+  char symbol;
+  int frequency;
+  nodetype *left;
+  nodetype *right;
+  nodetype(char s, int f)
+  {
+    symbol = s;
+    frequency = f;
+  }
+  bool operator<(const nodetype &other) const
+  {
+    return frequency > other.frequency;
+  }
+};
+nodetype *generateHuffmanTree(map<char, int> &freqMap)
+{
+  priority_queue<nodetype> q;
+  for (auto it = freqMap.begin(); it != freqMap.end(); it++)
+  {
+    nodetype *node = new nodetype(it->first, it->second);
+    q.push(*node);
+  }
+  while (q.size() > 1)
+  {
+    nodetype *left = new nodetype(q.top());
+    q.pop();
+    nodetype *right = new nodetype(q.top());
+    q.pop();
+
+    nodetype *root = new nodetype('\0', left->frequency + right->frequency);
+    root->left = left;
+    root->right = right;
+    q.push(*root);
+  }
+  return new nodetype(q.top());
+}
+
+void generateHuffmanCode(nodetype *root, string code, map<char, string> &codeMap)
+{
+  if (!root)
+    return;
+  if (root->left == nullptr && root->right == nullptr)
+  {
+    codeMap[root->symbol] = code;
+  }
+  generateHuffmanCode(root->left, code + "0", codeMap);
+  generateHuffmanCode(root->right, code + "1", codeMap);
+}
+
+string HuffmanEncode(string s, map<char, string> codeMap)
+{
+  string str = "";
+  for (int i = 0; i < s.length(); i++)
+  {
+    str += codeMap[s[i]];
+  }
+  return str;
+}
+
+void printfCode(nodetype *root, map<char, string> codeMap)
+{
+  if (root->symbol != '\0')
+  {
+    cout << root->symbol << " : " << codeMap[root->symbol] << endl;
+  }
+  else
+  {
+    printfCode(root->left, codeMap);
+    printfCode(root->right, codeMap);
+  }
+}
+
+int main()
+{
+  string s;
+  getline(cin, s);
+  map<char, int> freqMap; // 문자와 나온 횟수 저장하는 map
+  for (int i = 0; i < s.length(); i++)
+  {
+    freqMap[s[i]]++;
+  }
+  nodetype *root = generateHuffmanTree(freqMap); // 허프만 트리 구성
+
+  map<char, string> codeMap; // 문자의 허프만 코드 저장하는 map
+  generateHuffmanCode(root, "", codeMap);
+  cout << "Huffma Code" << endl;
+  printfCode(root, codeMap);
+  cout << "Original string : " << s << endl;
+  cout << "Encoded stirng : " << HuffmanEncode(s, codeMap) << endl;
+}
